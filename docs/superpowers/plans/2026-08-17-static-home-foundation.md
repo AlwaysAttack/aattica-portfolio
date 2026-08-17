@@ -6,7 +6,7 @@
 
 **Architecture:** Build a server-rendered App Router page from small presentational sections and a typed local content module. Keep the opening hero static in this increment so layout, content hierarchy, responsive behavior, and assets can be reviewed before Motion and the live ASCII renderer are introduced in a separate plan.
 
-**Tech Stack:** Node.js 24.19.0, pnpm 11.19.0, Next.js 16.3.1, React 19.2.8, TypeScript 7.0.2, CSS Modules/global CSS, Vitest, React Testing Library.
+**Tech Stack:** Node.js 24.19.0, pnpm 11.19.0, Next.js 16.3.1, React 19.2.8, TypeScript 6.0.3, CSS Modules/global CSS, Vitest, React Testing Library.
 
 ## Global Constraints
 
@@ -101,17 +101,17 @@ Create `package.json`:
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@testing-library/dom": "latest",
-    "@testing-library/jest-dom": "latest",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.2",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "eslint": "latest",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "9.39.5",
     "eslint-config-next": "16.3.1",
-    "jsdom": "latest",
-    "typescript": "7.0.2",
-    "vitest": "latest"
+    "jsdom": "30.0.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
   },
   "packageManager": "pnpm@11.19.0"
 }
@@ -172,6 +172,11 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 
 export default defineConfig([
   ...nextVitals,
+  {
+    rules: {
+      "@next/next/no-html-link-for-pages": "off",
+    },
+  },
   globalIgnores([".next/**", "out/**", "prototype/**"]),
 ]);
 ```
