@@ -1,22 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import type { ImgHTMLAttributes } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import HomePage from "@/app/page";
-
-vi.mock("next/image", () => ({
-  default: ({
-    fill: _fill,
-    priority: _priority,
-    alt,
-    ...props
-  }: ImgHTMLAttributes<HTMLImageElement> & {
-    fill?: boolean;
-    priority?: boolean;
-  }) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img alt={alt ?? ""} {...props} />
-  ),
-}));
 
 describe("home page", () => {
   it("places About before Selected projects", () => {
@@ -64,6 +48,18 @@ describe("home page", () => {
     for (const layer of screen.getAllByTestId("ascii-scramble-layer")) {
       expect(layer).toHaveAttribute("aria-hidden", "true");
     }
+  });
+
+  it("renders native hero wordmarks without the Frame 2 PNG", () => {
+    render(<HomePage />);
+
+    expect(
+      screen.getByLabelText("aattica. // human-made."),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("ascii-hero-background")).toBeInTheDocument();
+    expect(
+      document.querySelector('img[src*="aattica-banner.png"]'),
+    ).not.toBeInTheDocument();
   });
 
   it("explains that form submission is a frontend demonstration", () => {
