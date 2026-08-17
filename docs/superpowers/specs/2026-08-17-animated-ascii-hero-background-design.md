@@ -14,7 +14,7 @@ The hero has three independent visual layers:
 
 The background uses an uneven opacity mask so fragments appear and disappear across the hero instead of forming a uniformly readable wallpaper. Its motion remains slower and quieter than the bear reveal.
 
-On desktop, the wordmarks reproduce the wide Frame 2 composition on opposite sides of the bear. On mobile, both wordmarks move below the bear and become one unbroken line: `aattica. / human-made.`. They must fit within the viewport without horizontal scrolling or cropped letters.
+On desktop, the wordmarks reproduce the wide Frame 2 composition on opposite sides of the bear. On mobile, both wordmarks move below the bear and become one unbroken line: `aattica. // human-made.`. They must fit within the viewport without horizontal scrolling or cropped letters.
 
 ## Motion
 
