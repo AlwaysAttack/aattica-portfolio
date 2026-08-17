@@ -1,0 +1,41 @@
+# macOS and editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Next.js / React
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python / Django
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.sqlite3
+media/
+staticfiles/
+.pytest_cache/
+.mypy_cache/
+
+# Local tools and temporary design sessions
+.tools/
+.superpowers/brainstorm/
+
+# Resume drafts: publish approved exports later from public/resume/
+Daniil_Golskiy*
+
