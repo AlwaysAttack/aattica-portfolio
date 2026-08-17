@@ -82,11 +82,48 @@ describe("AsciiHeroBackground", () => {
     expect(scrambleHarness.records).toHaveLength(0);
   });
 
-  it("stagger-replays animated rows after their initial delays and intervals", () => {
+  it("stagger-replays each animated row at its own initial delay and interval", () => {
     render(<AsciiHeroBackground reducedMotion={false} />);
 
     act(() => {
-      vi.advanceTimersByTime(1200 + 9 * 320);
+      vi.advanceTimersByTime(1200 + 1 * 320 - 1);
+    });
+
+    for (const { replay } of scrambleHarness.records) {
+      expect(replay).not.toHaveBeenCalled();
+    }
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(scrambleHarness.records[0].replay).toHaveBeenCalledTimes(1);
+    expect(scrambleHarness.records[1].replay).not.toHaveBeenCalled();
+    expect(scrambleHarness.records[2].replay).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(1200 + 5 * 320 - (1200 + 1 * 320) - 1);
+    });
+
+    expect(scrambleHarness.records[1].replay).not.toHaveBeenCalled();
+    expect(scrambleHarness.records[2].replay).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(scrambleHarness.records[0].replay).toHaveBeenCalledTimes(1);
+    expect(scrambleHarness.records[1].replay).toHaveBeenCalledTimes(1);
+    expect(scrambleHarness.records[2].replay).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(1200 + 9 * 320 - (1200 + 5 * 320) - 1);
+    });
+
+    expect(scrambleHarness.records[2].replay).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(1);
     });
 
     for (const { replay } of scrambleHarness.records) {
@@ -94,12 +131,48 @@ describe("AsciiHeroBackground", () => {
     }
 
     act(() => {
-      vi.advanceTimersByTime(8000 + 9 * 420);
+      vi.advanceTimersByTime(8000 + 1 * 420 - (1200 + 9 * 320) - 1);
     });
 
-    for (const { replay } of scrambleHarness.records) {
-      expect(replay).toHaveBeenCalledTimes(2);
-    }
+    expect(scrambleHarness.records[0].replay).toHaveBeenCalledTimes(1);
+    expect(scrambleHarness.records[1].replay).toHaveBeenCalledTimes(1);
+    expect(scrambleHarness.records[2].replay).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(scrambleHarness.records[0].replay).toHaveBeenCalledTimes(2);
+    expect(scrambleHarness.records[1].replay).toHaveBeenCalledTimes(1);
+    expect(scrambleHarness.records[2].replay).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      vi.advanceTimersByTime(8000 + 5 * 420 - (8000 + 1 * 420) - 1);
+    });
+
+    expect(scrambleHarness.records[1].replay).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(scrambleHarness.records[0].replay).toHaveBeenCalledTimes(2);
+    expect(scrambleHarness.records[1].replay).toHaveBeenCalledTimes(2);
+    expect(scrambleHarness.records[2].replay).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      vi.advanceTimersByTime(8000 + 9 * 420 - (8000 + 5 * 420) - 1);
+    });
+
+    expect(scrambleHarness.records[2].replay).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(scrambleHarness.records[0].replay).toHaveBeenCalledTimes(2);
+    expect(scrambleHarness.records[1].replay).toHaveBeenCalledTimes(2);
+    expect(scrambleHarness.records[2].replay).toHaveBeenCalledTimes(2);
   });
 
   it("does not replay while the document is hidden", () => {
