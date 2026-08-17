@@ -13,9 +13,10 @@ The mark is a frontal, symmetrical bear head rendered as dense terminal-style te
 Text source properties:
 
 - 51 total lines, 49 non-empty lines;
-- maximum line width: 108 characters;
+- every source line is padded to exactly 108 characters;
+- the first non-empty line starts with 14 spaces, which are part of the art and must not be trimmed;
 - glyph palette: `@`, `▓`, `█`, `▒`, `0`, `8`, `G`, `L`, `f`, `i`, `;`, `:`, `,`, `.`;
-- intended rendering: monospaced font, preserved whitespace, centered composition;
+- intended rendering: locally hosted JetBrains Mono Regular with ligatures disabled, preserved whitespace, and a centered fixed grid;
 - aspect ratio is wide in text coordinates because terminal glyphs are taller than they are wide.
 
 ## Banner
@@ -31,11 +32,12 @@ The background words repeat at low opacity and fade unevenly across the area. Th
 
 - The bear remains the primary symbol and sits in the center of the opening hero.
 - `Frame 2.png` provides the opening background direction, with a responsive/mobile crop prepared separately if needed.
-- The live ASCII text version is preferred for the reveal animation; the PNG remains the stable visual fallback.
+- The live ASCII text version is used for the reveal and stable final state on every screen from 320 px upward.
+- `Frame 1.png` is a visual reference only and must not appear as a hero layer or animation fallback.
 - ASCII styling is concentrated in the opening, metadata, separators, loading states, and footer.
 - Long portfolio text remains set in a highly readable sans-serif.
 - Motion must respect the operating system's reduced-motion preference.
 
 ## Animation constraint
 
-The art must remain recognizable during animation. Random glyph replacement may affect only the reveal phase; the final frame must reproduce the approved bear silhouette without distortion.
+The approved reveal direction is distributed convergence over 6.8 seconds. Initial random glyphs may occupy any cell in the 108 × 51 grid so the silhouette is not visible prematurely. Correct characters lock into fixed coordinates in regional waves, noise in final-empty cells disappears, and the last frame reproduces the complete padded source exactly. Character coordinates never move.
