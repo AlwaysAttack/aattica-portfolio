@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { AsciiHeroMark } from "@/components/home/ascii-hero-mark";
 import { homeContent } from "@/content/home";
 
 export function HeroSection() {
@@ -13,14 +14,7 @@ export function HeroSection() {
         sizes="100vw"
       />
       <div className="hero__shade" aria-hidden="true" />
-      <Image
-        className="hero__bear"
-        src="/brand/aattica-bear.png"
-        alt="aattica bear mark"
-        width={1080}
-        height={1080}
-        priority
-      />
+      <AsciiHeroMark />
       <p className="hero__eyebrow">{homeContent.hero.eyebrow}</p>
       <a className="hero__scroll" href="#about">
         {homeContent.hero.scrollLabel} ↓

@@ -53,10 +53,17 @@ describe("home page", () => {
     expect(navigation).toBeInTheDocument();
   });
 
-  it("shows the approved bear mark in the introduction", () => {
+  it("shows the approved bear as raster-free accessible ASCII art", () => {
     render(<HomePage />);
 
-    expect(screen.getByRole("img", { name: "aattica bear mark" })).toBeInTheDocument();
+    expect(screen.getByText("aattica bear mark")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("img", { name: "aattica bear mark" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByTestId("ascii-scramble-layer")).toHaveLength(5);
+    for (const layer of screen.getAllByTestId("ascii-scramble-layer")) {
+      expect(layer).toHaveAttribute("aria-hidden", "true");
+    }
   });
 
   it("explains that form submission is a frontend demonstration", () => {
