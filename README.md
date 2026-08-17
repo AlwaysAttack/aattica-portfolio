@@ -4,14 +4,31 @@ Personal UX/UI and product-design portfolio for Daniil Golsky.
 
 ## Current stage
 
-The repository currently contains:
+The first frontend checkpoint is implemented on `main`:
 
-- a simple navigation prototype in `index.html`;
-- approved aattica bear and banner source images;
-- the home-page and ASCII-opening design specification;
-- an ASCII art reference.
+- a responsive Next.js home page with Hero, About, Selected projects, Contact, and footer sections;
+- working anchor navigation and a clearly marked local-only contact form demonstration;
+- approved aattica bear and banner assets;
+- a preserved disposable navigation prototype in `prototype/index.html`;
+- home-page, ASCII-opening, and implementation specifications;
+- automated structure and contact-path tests.
 
-The planned production frontend uses Next.js and React. Django will provide project administration, the portfolio API, and contact-form delivery to Telegram and email.
+The next frontend checkpoints are the deterministic ASCII opening animation, RU/EN routes, and complete case-study pages. Django will later provide project administration, the portfolio API, metrics hooks, and contact-form delivery to Telegram and email from a separate integration branch.
+
+## Local development
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Quality checks:
+
+```bash
+pnpm test
+pnpm lint
+pnpm build
+```
 
 ## Brand direction
 

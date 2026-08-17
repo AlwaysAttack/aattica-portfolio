@@ -184,7 +184,6 @@ export default defineConfig([
 Create `vitest.config.ts`:
 
 ```ts
-import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -193,7 +192,7 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
   },
   resolve: {
-    alias: { "@": path.resolve(__dirname, ".") },
+    alias: { "@": import.meta.dirname },
   },
 });
 ```
@@ -202,6 +201,12 @@ Create `tests/setup.ts`:
 
 ```ts
 import "@testing-library/jest-dom/vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach } from "vitest";
+
+afterEach(() => {
+  cleanup();
+});
 ```
 
 - [ ] **Step 4: Install the locked dependency set**
