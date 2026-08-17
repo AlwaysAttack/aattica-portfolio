@@ -13,10 +13,23 @@ export const ASCII_BACKGROUND_ROWS = [
   "::::aattica. // human-made.aattica. // human-made.aattica. // human-made.aattica. // human-made.",
 ] as const satisfies readonly string[];
 
-export const ASCII_BACKGROUND_ANIMATED_ROWS = [1, 5, 9] as const;
+export type AsciiBackgroundDisplayRow = {
+  id: number;
+  text: string;
+  motionIndex: 1 | 5 | 9 | null;
+};
 
-export function isAnimatedAsciiBackgroundRow(index: number) {
-  return ASCII_BACKGROUND_ANIMATED_ROWS.some(
-    (animatedIndex) => animatedIndex === index,
-  );
-}
+const MOTION_BY_DISPLAY_ROW = new Map<number, 1 | 5 | 9>([
+  [8, 1],
+  [24, 5],
+  [40, 9],
+]);
+
+export const ASCII_BACKGROUND_DISPLAY_ROWS = Array.from(
+  { length: 48 },
+  (_, id): AsciiBackgroundDisplayRow => ({
+    id,
+    text: ASCII_BACKGROUND_ROWS[id % ASCII_BACKGROUND_ROWS.length],
+    motionIndex: MOTION_BY_DISPLAY_ROW.get(id) ?? null,
+  }),
+);

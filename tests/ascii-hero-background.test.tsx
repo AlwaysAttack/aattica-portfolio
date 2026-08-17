@@ -66,14 +66,17 @@ describe("AsciiHeroBackground", () => {
     });
   });
 
-  it("renders a decorative field and limits live scrambling to three rows", () => {
+  it("renders a dense decorative field and limits live scrambling to three segments", () => {
     render(<AsciiHeroBackground reducedMotion={false} />);
 
     expect(screen.getByTestId("ascii-hero-background")).toHaveAttribute(
       "aria-hidden",
       "true",
     );
-    expect(document.querySelectorAll("[data-background-row]")).toHaveLength(12);
+    expect(document.querySelectorAll("[data-background-row]")).toHaveLength(48);
+    expect(document.querySelectorAll("[data-background-segment]")).toHaveLength(
+      96,
+    );
     expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(3);
     expect(scrambleHarness.records).toHaveLength(3);
     for (const { options } of scrambleHarness.records) {
@@ -95,6 +98,10 @@ describe("AsciiHeroBackground", () => {
   it("keeps every row static when reduced motion is requested", () => {
     render(<AsciiHeroBackground reducedMotion />);
 
+    expect(document.querySelectorAll("[data-background-row]")).toHaveLength(48);
+    expect(document.querySelectorAll("[data-background-segment]")).toHaveLength(
+      96,
+    );
     expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(0);
     expect(scrambleHarness.records).toHaveLength(0);
   });
@@ -102,6 +109,10 @@ describe("AsciiHeroBackground", () => {
   it("switches production rendering to static rows when the motion preference changes", () => {
     render(<AsciiHeroBackground />);
 
+    expect(document.querySelectorAll("[data-background-row]")).toHaveLength(48);
+    expect(document.querySelectorAll("[data-background-segment]")).toHaveLength(
+      96,
+    );
     expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(3);
 
     mediaQueryHarness.matches = true;
@@ -112,6 +123,10 @@ describe("AsciiHeroBackground", () => {
     });
 
     expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(0);
+    expect(document.querySelectorAll("[data-background-row]")).toHaveLength(48);
+    expect(document.querySelectorAll("[data-background-segment]")).toHaveLength(
+      96,
+    );
 
     act(() => {
       vi.advanceTimersByTime(1200 + 9 * 320 + 8000 + 9 * 420);

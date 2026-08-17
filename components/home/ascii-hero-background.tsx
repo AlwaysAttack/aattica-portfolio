@@ -2,17 +2,15 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { useScramble } from "use-scramble";
-import {
-  ASCII_BACKGROUND_ROWS,
-  isAnimatedAsciiBackgroundRow,
-} from "@/content/ascii-background";
+import { ASCII_BACKGROUND_DISPLAY_ROWS } from "@/content/ascii-background";
 
 type AsciiHeroBackgroundProps = {
   reducedMotion?: boolean;
 };
 
 type BackgroundRowProps = {
-  index: number;
+  id: number;
+  motionIndex: 1 | 5 | 9;
   text: string;
 };
 
@@ -46,11 +44,16 @@ function usePrefersReducedMotion() {
   );
 }
 
-function StaticBackgroundRow({ text }: BackgroundRowProps) {
-  return <span data-background-row>{text}</span>;
+function StaticBackgroundRow({ id, text }: Omit<BackgroundRowProps, "motionIndex">) {
+  return (
+    <span data-background-row data-row-id={id}>
+      <span data-background-segment>{text}</span>
+      <span data-background-segment>{text}</span>
+    </span>
+  );
 }
 
-function AnimatedBackgroundRow({ index, text }: BackgroundRowProps) {
+function AnimatedBackgroundRow({ id, motionIndex, text }: BackgroundRowProps) {
   const { ref, replay } = useScramble({
     text,
     playOnMount: false,
@@ -66,8 +69,8 @@ function AnimatedBackgroundRow({ index, text }: BackgroundRowProps) {
   });
 
   useEffect(() => {
-    const initialDelay = 1200 + index * 320;
-    const repeatDelay = 8000 + index * 420;
+    const initialDelay = 1200 + motionIndex * 320;
+    const repeatDelay = 8000 + motionIndex * 420;
     const timeout = window.setTimeout(() => {
       if (!document.hidden) {
         replay();
@@ -83,11 +86,14 @@ function AnimatedBackgroundRow({ index, text }: BackgroundRowProps) {
       window.clearTimeout(timeout);
       window.clearInterval(interval);
     };
-  }, [index, replay]);
+  }, [motionIndex, replay]);
 
   return (
-    <span ref={ref} data-background-row data-animated="true">
-      {text}
+    <span data-background-row data-row-id={id}>
+      <span ref={ref} data-background-segment data-animated="true">
+        {text}
+      </span>
+      <span data-background-segment>{text}</span>
     </span>
   );
 }
@@ -100,11 +106,16 @@ export function AsciiHeroBackground({
 
   return (
     <div data-testid="ascii-hero-background" aria-hidden="true">
-      {ASCII_BACKGROUND_ROWS.map((text, index) =>
-        !shouldReduceMotion && isAnimatedAsciiBackgroundRow(index) ? (
-          <AnimatedBackgroundRow key={index} index={index} text={text} />
+      {ASCII_BACKGROUND_DISPLAY_ROWS.map((row) =>
+        !shouldReduceMotion && row.motionIndex !== null ? (
+          <AnimatedBackgroundRow
+            key={row.id}
+            id={row.id}
+            motionIndex={row.motionIndex}
+            text={row.text}
+          />
         ) : (
-          <StaticBackgroundRow key={index} index={index} text={text} />
+          <StaticBackgroundRow key={row.id} id={row.id} text={row.text} />
         ),
       )}
     </div>
