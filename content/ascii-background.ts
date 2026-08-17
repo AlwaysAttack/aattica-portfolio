@@ -1,5 +1,5 @@
 export const ASCII_BACKGROUND_ROWS = [
-  " aattica. // human-made.aattica. // human-made.aattica. // human-made.aattica. // human-made....",
+  "aattica. // human-made.aattica. // human-made.aattica. // human-made.aattica. // human-made.....",
   "....aattica. // human-made.aattica. // human-made.aattica. // human-made.aattica. // human-made.",
   "::::aattica. // human-made.aattica. // human-made.aattica. // human-made.aattica. // human-made.",
   "----aattica. // human-made.aattica. // human-made.aattica. // human-made.aattica. // human-made.",
