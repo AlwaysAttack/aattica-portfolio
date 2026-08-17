@@ -62,6 +62,16 @@ describe("home page", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("uses the role label instead of repeating the main hero wordmark", () => {
+    render(<HomePage />);
+
+    expect(screen.getByText("ux/ui designer")).toBeInTheDocument();
+    expect(screen.queryByText("aattica. / human-made.")).not.toBeInTheDocument();
+    expect(
+      screen.getByLabelText("aattica. // human-made."),
+    ).toBeInTheDocument();
+  });
+
   it("explains that form submission is a frontend demonstration", () => {
     render(<HomePage />);
 

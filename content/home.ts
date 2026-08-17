@@ -14,7 +14,7 @@ export const homeContent = {
     { href: "#contact", label: "Contact" },
   ],
   hero: {
-    eyebrow: "aattica. / human-made.",
+    eyebrow: "ux/ui designer",
     scrollLabel: "Scroll to meet me",
   },
   about: {
