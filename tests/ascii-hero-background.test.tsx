@@ -23,6 +23,11 @@ const scrambleHarness = vi.hoisted(() => ({
   }>,
 }));
 
+const mediaQueryHarness = vi.hoisted(() => ({
+  listeners: new Set<() => void>(),
+  matches: false,
+}));
+
 vi.mock("use-scramble", () => ({
   useScramble: (options: ScrambleOptions) => {
     const record = { options, replay: vi.fn(), ref: { current: null } };
@@ -35,6 +40,20 @@ describe("AsciiHeroBackground", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     scrambleHarness.records.length = 0;
+    mediaQueryHarness.listeners.clear();
+    mediaQueryHarness.matches = false;
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: () => ({
+        get matches() {
+          return mediaQueryHarness.matches;
+        },
+        addEventListener: (_event: string, listener: () => void) =>
+          mediaQueryHarness.listeners.add(listener),
+        removeEventListener: (_event: string, listener: () => void) =>
+          mediaQueryHarness.listeners.delete(listener),
+      }),
+    });
   });
 
   afterEach(() => {
@@ -57,22 +76,20 @@ describe("AsciiHeroBackground", () => {
     expect(document.querySelectorAll("[data-background-row]")).toHaveLength(12);
     expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(3);
     expect(scrambleHarness.records).toHaveLength(3);
-    expect(scrambleHarness.records.map((record) => record.options)).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          playOnMount: false,
-          speed: 0.35,
-          tick: 2,
-          step: 8,
-          scramble: 3,
-          seed: 8,
-          chance: 0.35,
-          overdrive: false,
-          overflow: false,
-          ignore: [" ", "\n"],
-        }),
-      ]),
-    );
+    for (const { options } of scrambleHarness.records) {
+      expect(options).toMatchObject({
+        playOnMount: false,
+        speed: 0.35,
+        tick: 2,
+        step: 8,
+        scramble: 3,
+        seed: 8,
+        chance: 0.35,
+        overdrive: false,
+        overflow: false,
+        ignore: [" ", "\n"],
+      });
+    }
   });
 
   it("keeps every row static when reduced motion is requested", () => {
@@ -80,6 +97,29 @@ describe("AsciiHeroBackground", () => {
 
     expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(0);
     expect(scrambleHarness.records).toHaveLength(0);
+  });
+
+  it("switches production rendering to static rows when the motion preference changes", () => {
+    render(<AsciiHeroBackground />);
+
+    expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(3);
+
+    mediaQueryHarness.matches = true;
+    act(() => {
+      for (const listener of mediaQueryHarness.listeners) {
+        listener();
+      }
+    });
+
+    expect(document.querySelectorAll('[data-animated="true"]')).toHaveLength(0);
+
+    act(() => {
+      vi.advanceTimersByTime(1200 + 9 * 320 + 8000 + 9 * 420);
+    });
+
+    for (const { replay } of scrambleHarness.records) {
+      expect(replay).not.toHaveBeenCalled();
+    }
   });
 
   it("stagger-replays each animated row at its own initial delay and interval", () => {

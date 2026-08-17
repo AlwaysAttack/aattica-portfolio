@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useScramble } from "use-scramble";
 import {
   ASCII_BACKGROUND_ROWS,
@@ -15,6 +15,36 @@ type BackgroundRowProps = {
   index: number;
   text: string;
 };
+
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeToReducedMotion(callback: () => void) {
+  if (typeof window.matchMedia !== "function") {
+    return () => {};
+  }
+
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+  mediaQuery.addEventListener("change", callback);
+  return () => mediaQuery.removeEventListener("change", callback);
+}
+
+function getReducedMotionSnapshot() {
+  return typeof window.matchMedia === "function"
+    ? window.matchMedia(REDUCED_MOTION_QUERY).matches
+    : false;
+}
+
+function getReducedMotionServerSnapshot() {
+  return false;
+}
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot,
+  );
+}
 
 function StaticBackgroundRow({ text }: BackgroundRowProps) {
   return <span data-background-row>{text}</span>;
@@ -63,12 +93,15 @@ function AnimatedBackgroundRow({ index, text }: BackgroundRowProps) {
 }
 
 export function AsciiHeroBackground({
-  reducedMotion = false,
-}: AsciiHeroBackgroundProps) {
+  reducedMotion,
+}: AsciiHeroBackgroundProps = {}) {
+  const userPrefersReducedMotion = usePrefersReducedMotion();
+  const shouldReduceMotion = reducedMotion ?? userPrefersReducedMotion;
+
   return (
     <div data-testid="ascii-hero-background" aria-hidden="true">
       {ASCII_BACKGROUND_ROWS.map((text, index) =>
-        !reducedMotion && isAnimatedAsciiBackgroundRow(index) ? (
+        !shouldReduceMotion && isAnimatedAsciiBackgroundRow(index) ? (
           <AnimatedBackgroundRow key={index} index={index} text={text} />
         ) : (
           <StaticBackgroundRow key={index} index={index} text={text} />
