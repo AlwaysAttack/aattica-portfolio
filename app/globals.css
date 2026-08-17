@@ -195,6 +195,29 @@ textarea:focus-visible {
   display: none;
 }
 
+@media (min-width: 721px) {
+  .hero__wordmarks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(340px, 39.5vw, 580px);
+    font-size: clamp(34px, 3.75vw, 64px);
+  }
+
+  .hero__wordmarks > span:first-child {
+    justify-self: end;
+  }
+
+  .hero__wordmarks > span:last-child {
+    justify-self: start;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 900px) {
+  .hero__wordmarks {
+    font-size: clamp(21px, 3vw, 27px);
+  }
+}
+
 .hero-mark {
   position: relative;
   z-index: 1;
