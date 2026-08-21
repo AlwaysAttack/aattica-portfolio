@@ -75,4 +75,13 @@ describe("localized metadata", () => {
 
     expect(() => getSiteUrl()).toThrow("NEXT_PUBLIC_SITE_URL");
   });
+
+  it("never publishes localhost as the production fallback", () => {
+    expect(getSiteUrl(undefined, "production").toString()).toBe(
+      "https://aattica.cc/",
+    );
+    expect(getSiteUrl(undefined, "development").toString()).toBe(
+      "http://localhost:3000/",
+    );
+  });
 });
