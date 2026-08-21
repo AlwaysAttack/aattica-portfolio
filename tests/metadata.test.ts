@@ -53,7 +53,7 @@ describe("localized metadata", () => {
     });
   });
 
-  it("lists exactly the two indexable localized home pages", () => {
+  it("lists the localized home pages and published Drivee case pages", () => {
     process.env.NEXT_PUBLIC_SITE_URL = "https://aattica.cc";
 
     expect(sitemap()).toEqual([
@@ -66,6 +66,16 @@ describe("localized metadata", () => {
         url: "https://aattica.cc/ru",
         changeFrequency: "monthly",
         priority: 1,
+      },
+      {
+        url: "https://aattica.cc/en/projects/drivee",
+        changeFrequency: "monthly",
+        priority: 0.8,
+      },
+      {
+        url: "https://aattica.cc/ru/projects/drivee",
+        changeFrequency: "monthly",
+        priority: 0.8,
       },
     ]);
   });
