@@ -2,6 +2,7 @@ export type ProjectSlug = "drivee" | "chestnopro" | "atlanta-vpn";
 
 export type ProjectSummary = {
   slug: ProjectSlug;
+  status: "published" | "coming-soon";
   index: string;
   title: string;
   category: string;
@@ -47,6 +48,7 @@ export type HomeContent = {
   projects: {
     eyebrow: string;
     title: string;
+    statusLabel: string;
     items: readonly ProjectSummary[];
   };
   contact: {

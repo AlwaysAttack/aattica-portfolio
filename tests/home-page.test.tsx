@@ -38,6 +38,14 @@ describe("localized home page", () => {
     expect(
       within(projects).getByRole("link", { name: /Drivee Peak/ }),
     ).toHaveAttribute("href", "/en/projects/drivee");
+    expect(within(projects).getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual([
+      "Drivee Peak",
+      "ЧестноПро",
+      "Atlanta VPN",
+    ]);
+    expect(within(projects).getAllByText("Coming soon")).toHaveLength(2);
+    expect(within(projects).queryByRole("link", { name: "Open ЧестноПро case study" })).not.toBeInTheDocument();
+    expect(within(projects).queryByRole("link", { name: "Open Atlanta VPN case study" })).not.toBeInTheDocument();
     expect(screen.getByText("aattica bear mark")).toBeInTheDocument();
     expect(screen.getAllByTestId("ascii-scramble-layer")).toHaveLength(5);
 
@@ -82,6 +90,14 @@ describe("localized home page", () => {
     expect(
       within(projects).getByRole("link", { name: /Drivee Peak/ }),
     ).toHaveAttribute("href", "/ru/projects/drivee");
+    expect(within(projects).getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual([
+      "Drivee Peak",
+      "ЧестноПро",
+      "Atlanta VPN",
+    ]);
+    expect(within(projects).getAllByText("Скоро")).toHaveLength(2);
+    expect(within(projects).queryByRole("link", { name: "Открыть кейс ЧестноПро" })).not.toBeInTheDocument();
+    expect(within(projects).queryByRole("link", { name: "Открыть кейс Atlanta VPN" })).not.toBeInTheDocument();
     expect(
       screen.getByText("ASCII-логотип aattica с медведем"),
     ).toBeInTheDocument();

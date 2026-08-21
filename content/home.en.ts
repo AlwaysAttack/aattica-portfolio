@@ -65,9 +65,11 @@ export const homeContentEn = {
   projects: {
     eyebrow: "02 / SELECTED WORK",
     title: "Selected projects",
+    statusLabel: "Coming soon",
     items: [
       {
         slug: "drivee",
+        status: "published",
         index: "01",
         title: "Drivee Peak",
         category: "Product design · Hackathon",
@@ -78,6 +80,7 @@ export const homeContentEn = {
       },
       {
         slug: "chestnopro",
+        status: "coming-soon",
         index: "02",
         title: "ЧестноПро",
         category: "Branding · Real business",
@@ -88,6 +91,7 @@ export const homeContentEn = {
       },
       {
         slug: "atlanta-vpn",
+        status: "coming-soon",
         index: "03",
         title: "Atlanta VPN",
         category: "iOS · Individual concept",
