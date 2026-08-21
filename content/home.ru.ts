@@ -60,7 +60,10 @@ export const homeContentRu = {
       "HTML/CSS/JS",
     ],
     resumesTitle: "Резюме",
-    resumes: ["Резюме RU — скоро", "Резюме EN — скоро"],
+    resumes: [
+      { label: "Резюме RU · PDF", href: "/resume/daniil-golskiy-ru.pdf" },
+      { label: "Резюме EN · PDF", href: "/resume/daniil-golskiy-en.pdf" },
+    ],
   },
   projects: {
     eyebrow: "02 / ИЗБРАННЫЕ РАБОТЫ",

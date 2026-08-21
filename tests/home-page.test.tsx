@@ -30,10 +30,14 @@ describe("localized home page", () => {
     expect(within(about).getByText("How I work")).toBeInTheDocument();
     expect(within(about).getByText("Capabilities")).toBeInTheDocument();
     expect(within(about).getByText("Tools")).toBeInTheDocument();
-    expect(within(about).getAllByText(/coming soon/i)).toHaveLength(2);
-    for (const resume of within(about).getAllByText(/coming soon/i)) {
-      expect(resume).toHaveAttribute("aria-disabled", "true");
-    }
+    expect(within(about).getByRole("link", { name: "Resume RU · PDF" })).toHaveAttribute(
+      "href",
+      "/resume/daniil-golskiy-ru.pdf",
+    );
+    expect(within(about).getByRole("link", { name: "Resume EN · PDF" })).toHaveAttribute(
+      "href",
+      "/resume/daniil-golskiy-en.pdf",
+    );
 
     expect(
       within(projects).getByRole("link", { name: /Drivee Peak/ }),
@@ -82,10 +86,14 @@ describe("localized home page", () => {
     expect(within(about).getByText("Как я работаю")).toBeInTheDocument();
     expect(within(about).getByText("Компетенции")).toBeInTheDocument();
     expect(within(about).getByText("Инструменты")).toBeInTheDocument();
-    expect(within(about).getAllByText(/скоро/i)).toHaveLength(2);
-    for (const resume of within(about).getAllByText(/скоро/i)) {
-      expect(resume).toHaveAttribute("aria-disabled", "true");
-    }
+    expect(within(about).getByRole("link", { name: "Резюме RU · PDF" })).toHaveAttribute(
+      "href",
+      "/resume/daniil-golskiy-ru.pdf",
+    );
+    expect(within(about).getByRole("link", { name: "Резюме EN · PDF" })).toHaveAttribute(
+      "href",
+      "/resume/daniil-golskiy-en.pdf",
+    );
 
     expect(
       within(projects).getByRole("link", { name: /Drivee Peak/ }),

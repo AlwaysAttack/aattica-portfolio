@@ -43,7 +43,7 @@ export type HomeContent = {
     toolsTitle: string;
     tools: readonly string[];
     resumesTitle: string;
-    resumes: readonly string[];
+    resumes: readonly { label: string; href: string }[];
   };
   projects: {
     eyebrow: string;

@@ -37,9 +37,10 @@ export function AboutSection({ content }: AboutSectionProps) {
         <h2>{content.resumesTitle}</h2>
         <div className="about__resumes">
           {content.resumes.map((resume) => (
-            <span aria-disabled="true" key={resume}>
-              {resume}
-            </span>
+            <a href={resume.href} key={resume.href} rel="noreferrer" target="_blank">
+              {resume.label}
+              <span aria-hidden="true">↗</span>
+            </a>
           ))}
         </div>
       </div>

@@ -7,6 +7,7 @@ Personal UX/UI and product-design portfolio for Daniil Golsky.
 The current frontend includes:
 
 - responsive English and Russian home routes with Hero, About, Selected projects, Contact, and footer sections;
+- English and Russian PDF resumes linked from the About section;
 - a static bilingual Drivee Peak case study with the original 19-slide presentation;
 - an honest project index: Drivee is published, while ЧестноПро and Atlanta VPN are visibly marked as coming soon rather than linked to missing pages;
 - working anchor navigation and a clearly marked frontend-only contact demonstration;
