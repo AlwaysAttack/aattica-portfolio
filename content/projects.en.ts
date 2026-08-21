@@ -74,7 +74,10 @@ export const driveeContentEn = {
     body: "A teammate trained the price-decision model using marketplace orders and public external sources. The team implemented the UI in React Native.",
     uiImplementation: "UI implemented by the team in React Native.",
   },
-  outcome: "Drivee Peak received the hackathon's Best App Design award. It was not commercially launched or sold after the hackathon, so this case makes no performance or business-metric claims.",
+  outcome: {
+    title: "Outcome",
+    body: "Drivee Peak received the hackathon's Best App Design award. It was not commercially launched or sold after the hackathon, so this case makes no performance or business-metric claims.",
+  },
   limitations: {
     title: "Limitations",
     body: "This was a hackathon project, not a production rollout. There are no launch, revenue, conversion, or adoption metrics to report.",

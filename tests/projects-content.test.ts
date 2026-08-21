@@ -122,7 +122,7 @@ describe("published project content", () => {
     expected.delivered.forEach((pattern) =>
       expect(`${content.delivered.body} ${content.delivered.uiImplementation}`).toMatch(pattern),
     );
-    expected.outcome.forEach((pattern) => expect(content.outcome).toMatch(pattern));
+    expected.outcome.forEach((pattern) => expect(content.outcome.body).toMatch(pattern));
     expected.limitations.forEach((pattern) => expect(content.limitations.body).toMatch(pattern));
   });
 

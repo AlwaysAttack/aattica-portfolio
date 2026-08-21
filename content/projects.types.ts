@@ -51,7 +51,10 @@ export type ProjectContent = {
     body: string;
     uiImplementation: string;
   };
-  outcome: string;
+  outcome: {
+    title: string;
+    body: string;
+  };
   limitations: {
     title: string;
     body: string;
