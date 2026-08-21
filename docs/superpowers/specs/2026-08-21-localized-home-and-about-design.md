@@ -1,6 +1,6 @@
 # Localized Home and About Design
 
-Date: 2026-08-21  
+Date: 2026-08-21
 Status: ready for written-spec review
 
 ## Objective
