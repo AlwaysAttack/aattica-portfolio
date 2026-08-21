@@ -27,6 +27,7 @@ const SCRAMBLE_RANGE = [...ASCII_GLYPH_PALETTE].map((glyph) =>
 type RevealState = "pending" | "animating" | "complete" | "static";
 
 type AsciiHeroMarkProps = {
+  label?: string;
   reducedMotion?: boolean;
 };
 
@@ -153,7 +154,10 @@ function ScrambleLayer({
   );
 }
 
-export function AsciiHeroMark({ reducedMotion }: AsciiHeroMarkProps = {}) {
+export function AsciiHeroMark({
+  label = "aattica bear mark",
+  reducedMotion,
+}: AsciiHeroMarkProps = {}) {
   const userPrefersReducedMotion = usePrefersReducedMotion();
   const shouldReduceMotion = reducedMotion ?? userPrefersReducedMotion;
   const completedRegions = useRef(new Set<AsciiRegionName>());
@@ -191,7 +195,7 @@ export function AsciiHeroMark({ reducedMotion }: AsciiHeroMarkProps = {}) {
 
   return (
     <div className="hero-mark" data-reveal-state={revealState}>
-      <span className="sr-only">aattica bear mark</span>
+      <span className="sr-only">{label}</span>
       <div
         className="hero-mark__layers"
         data-visible={hasStarted || revealState === "complete"}

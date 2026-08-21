@@ -1,34 +1,47 @@
-import { homeContent } from "@/content/home";
+import type { HomeContent } from "@/content/home";
 
-export function AboutSection() {
-  const { about } = homeContent;
+type AboutSectionProps = {
+  content: HomeContent["about"];
+};
 
+export function AboutSection({ content }: AboutSectionProps) {
   return (
     <section id="about" className="about" aria-labelledby="about-title">
       <div className="about__sticky">
-        <p className="eyebrow">01 / PROFILE</p>
-        <h1 id="about-title">{about.title}</h1>
+        <p className="eyebrow">{content.eyebrow}</p>
+        <h1 id="about-title">{content.title}</h1>
+        <p className="about__statement">{content.statement}</p>
       </div>
       <div className="about__content">
-        <p className="about__statement">{about.statement}</p>
-        <dl>
-          <div>
-            <dt>Experience</dt>
-            <dd>{about.experience}</dd>
-          </div>
-          <div>
-            <dt>Availability</dt>
-            <dd>{about.availability}</dd>
-          </div>
+        <p className="about__intro">{content.introduction}</p>
+        <div className="about__approach">
+          <h2>{content.approachTitle}</h2>
+          <p>{content.approach}</p>
+        </div>
+        <dl className="about__facts">
+          {content.facts.map((fact) => (
+            <div key={fact.label}>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
         </dl>
-        <h2>Capabilities</h2>
-        <ul>
-          {about.skills.map((skill) => (
+        <h2>{content.capabilitiesTitle}</h2>
+        <ul className="about__capabilities">
+          {content.capabilities.map((skill) => (
             <li key={skill}>{skill}</li>
           ))}
         </ul>
-        <h2>Tools</h2>
-        <p>{about.tools.join(" · ")}</p>
+        <h2>{content.toolsTitle}</h2>
+        <p className="about__tools">{content.tools.join(" · ")}</p>
+        <h2>{content.resumesTitle}</h2>
+        <div className="about__resumes">
+          {content.resumes.map((resume) => (
+            <span aria-disabled="true" key={resume}>
+              {resume}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );

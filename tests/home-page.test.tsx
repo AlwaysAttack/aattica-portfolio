@@ -1,57 +1,101 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import HomePage from "@/app/page";
+import { LocalizedHomePage } from "@/app/[lang]/page";
+import { getHomeContent } from "@/content/home";
 
-describe("home page", () => {
-  it("places About before Selected projects", () => {
-    render(<HomePage />);
+describe("localized home page", () => {
+  it("renders the complete English employer journey", () => {
+    render(<LocalizedHomePage locale="en" content={getHomeContent("en")} />);
+
+    const navigation = screen.getByRole("navigation", {
+      name: "Primary navigation",
+    });
+    expect(within(navigation).getByRole("link", { name: "About" })).toHaveAttribute(
+      "href",
+      "#about",
+    );
+    expect(
+      within(navigation).getByRole("link", { name: "Switch to Russian" }),
+    ).toHaveAttribute("href", "/api/locale/ru");
 
     const about = screen.getByRole("region", { name: "About me" });
     const projects = screen.getByRole("region", { name: "Selected projects" });
-
     expect(about.compareDocumentPosition(projects)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
-  });
-
-  it("offers direct Telegram and email contact paths", () => {
-    render(<HomePage />);
-
-    expect(screen.getByRole("link", { name: "Telegram" })).toHaveAttribute(
-      "href",
-      "https://t.me/aattica",
-    );
+    expect(within(about).getByText("2 years")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "contact@aattica.cc" }),
-    ).toHaveAttribute("href", "mailto:contact@aattica.cc");
-  });
-
-  it("links navigation to About, Projects and Contact", () => {
-    render(<HomePage />);
-
-    const navigation = screen.getByRole("navigation", { name: "Primary navigation" });
-
-    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "#about");
-    expect(screen.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "#projects");
-    expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "#contact");
-    expect(navigation).toBeInTheDocument();
-  });
-
-  it("shows the approved bear as raster-free accessible ASCII art", () => {
-    render(<HomePage />);
-
-    expect(screen.getByText("aattica bear mark")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("img", { name: "aattica bear mark" }),
-    ).not.toBeInTheDocument();
-    expect(screen.getAllByTestId("ascii-scramble-layer")).toHaveLength(5);
-    for (const layer of screen.getAllByTestId("ascii-scramble-layer")) {
-      expect(layer).toHaveAttribute("aria-hidden", "true");
+      within(about).getByText("Russian native, English B2"),
+    ).toBeInTheDocument();
+    expect(within(about).getByText("How I work")).toBeInTheDocument();
+    expect(within(about).getByText("Capabilities")).toBeInTheDocument();
+    expect(within(about).getByText("Tools")).toBeInTheDocument();
+    expect(within(about).getAllByText(/coming soon/i)).toHaveLength(2);
+    for (const resume of within(about).getAllByText(/coming soon/i)) {
+      expect(resume).toHaveAttribute("aria-disabled", "true");
     }
+
+    expect(
+      within(projects).getByRole("link", { name: /Drivee Peak/ }),
+    ).toHaveAttribute("href", "/en/projects/drivee");
+    expect(screen.getByText("aattica bear mark")).toBeInTheDocument();
+    expect(screen.getAllByTestId("ascii-scramble-layer")).toHaveLength(5);
+
+    fireEvent.submit(screen.getByRole("form", { name: "Contact form" }));
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Demo submitted — Django delivery will be connected later.",
+    );
   });
 
-  it("renders native hero wordmarks without the Frame 2 PNG", () => {
-    render(<HomePage />);
+  it("renders the complete Russian employer journey", () => {
+    render(<LocalizedHomePage locale="ru" content={getHomeContent("ru")} />);
+
+    const navigation = screen.getByRole("navigation", {
+      name: "Основная навигация",
+    });
+    expect(
+      within(navigation).getByRole("link", { name: "Обо мне" }),
+    ).toHaveAttribute("href", "#about");
+    expect(
+      within(navigation).getByRole("link", {
+        name: "Переключить на английский",
+      }),
+    ).toHaveAttribute("href", "/api/locale/en");
+
+    const about = screen.getByRole("region", { name: "Обо мне" });
+    const projects = screen.getByRole("region", { name: "Избранные проекты" });
+    expect(about.compareDocumentPosition(projects)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(within(about).getByText("2 года")).toBeInTheDocument();
+    expect(
+      within(about).getByText("Русский — родной, английский — B2"),
+    ).toBeInTheDocument();
+    expect(within(about).getByText("Как я работаю")).toBeInTheDocument();
+    expect(within(about).getByText("Компетенции")).toBeInTheDocument();
+    expect(within(about).getByText("Инструменты")).toBeInTheDocument();
+    expect(within(about).getAllByText(/скоро/i)).toHaveLength(2);
+    for (const resume of within(about).getAllByText(/скоро/i)) {
+      expect(resume).toHaveAttribute("aria-disabled", "true");
+    }
+
+    expect(
+      within(projects).getByRole("link", { name: /Drivee Peak/ }),
+    ).toHaveAttribute("href", "/ru/projects/drivee");
+    expect(
+      screen.getByText("ASCII-логотип aattica с медведем"),
+    ).toBeInTheDocument();
+
+    fireEvent.submit(
+      screen.getByRole("form", { name: "Форма обратной связи" }),
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Демо отправлено — доставка через Django будет подключена позже.",
+    );
+  });
+
+  it("keeps the hero raster-free in both languages", () => {
+    render(<LocalizedHomePage locale="en" content={getHomeContent("en")} />);
 
     expect(
       screen.getByLabelText("aattica. // human-made."),
@@ -60,25 +104,5 @@ describe("home page", () => {
     expect(
       document.querySelector('img[src*="aattica-banner.png"]'),
     ).not.toBeInTheDocument();
-  });
-
-  it("uses the role label instead of repeating the main hero wordmark", () => {
-    render(<HomePage />);
-
-    expect(screen.getByText("ux/ui designer")).toBeInTheDocument();
-    expect(screen.queryByText("aattica. / human-made.")).not.toBeInTheDocument();
-    expect(
-      screen.getByLabelText("aattica. // human-made."),
-    ).toBeInTheDocument();
-  });
-
-  it("explains that form submission is a frontend demonstration", () => {
-    render(<HomePage />);
-
-    fireEvent.submit(screen.getByRole("form", { name: "Contact form" }));
-
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Demo submitted — Django delivery will be connected later.",
-    );
   });
 });
