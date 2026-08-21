@@ -17,6 +17,7 @@ import {
 } from "@/lib/ascii-regions";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+const FONT_READY_FALLBACK_MS = 400;
 const REGION_DELAYS = [0, 180, 360, 540, 720] as const;
 const REGION_BLOCKS = buildAsciiRegionBlocks(ASCII_BEAR);
 const SCRAMBLE_IGNORE = [" ", "\n"];
@@ -122,15 +123,20 @@ function ScrambleLayer({
     onAnimationFrame: handleAnimationFrame,
     onAnimationEnd: handleAnimationEnd,
   });
+  const replayRef = useRef(replay);
+
+  useEffect(() => {
+    replayRef.current = replay;
+  }, [replay]);
 
   useEffect(() => {
     if (!play) {
       return;
     }
 
-    const timer = window.setTimeout(replay, delay);
+    const timer = window.setTimeout(() => replayRef.current(), delay);
     return () => window.clearTimeout(timer);
-  }, [delay, play, replay]);
+  }, [delay, play]);
 
   return (
     <pre
@@ -166,15 +172,48 @@ export function AsciiHeroMark({
 
   useEffect(() => {
     let isCurrent = true;
+    let firstFrame = 0;
+    let secondFrame = 0;
+    let fontReadyFallback = 0;
 
-    window.queueMicrotask(() => {
-      if (isCurrent) {
-        setRevealState(shouldReduceMotion ? "static" : "animating");
-      }
-    });
+    if (shouldReduceMotion) {
+      window.queueMicrotask(() => {
+        if (isCurrent) {
+          setRevealState("static");
+        }
+      });
+    } else {
+      const beginReveal = () => {
+        firstFrame = window.requestAnimationFrame(() => {
+          secondFrame = window.requestAnimationFrame(() => {
+            if (isCurrent) {
+              setRevealState("animating");
+            }
+          });
+        });
+      };
+
+      const fontsReady = document.fonts?.ready?.then(
+        () => undefined,
+        () => undefined,
+      );
+      const fallbackReady = new Promise<void>((resolve) => {
+        fontReadyFallback = window.setTimeout(resolve, FONT_READY_FALLBACK_MS);
+      });
+
+      void Promise.race([fontsReady ?? Promise.resolve(), fallbackReady]).then(
+        () => {
+          window.clearTimeout(fontReadyFallback);
+          beginReveal();
+        },
+      );
+    }
 
     return () => {
       isCurrent = false;
+      window.clearTimeout(fontReadyFallback);
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
     };
   }, [shouldReduceMotion]);
 

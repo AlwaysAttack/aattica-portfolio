@@ -1,5 +1,13 @@
 import { act, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from "vitest";
 import { AsciiHeroMark } from "@/components/home/ascii-hero-mark";
 import { ASCII_BEAR, ASCII_GLYPH_PALETTE } from "@/content/ascii-bear";
 import {
@@ -28,10 +36,15 @@ const scrambleHarness = vi.hoisted(() => ({
     {
       options: ScrambleOptions;
       ref: { current: HTMLElement | null };
-      replay: ReturnType<typeof vi.fn>;
+      replay: Mock<() => void>;
     }
   >(),
 }));
+
+const originalDocumentFonts = Object.getOwnPropertyDescriptor(
+  document,
+  "fonts",
+);
 
 vi.mock("use-scramble", () => ({
   useScramble: (options: ScrambleOptions) => {
@@ -40,7 +53,10 @@ vi.mock("use-scramble", () => ({
 
     if (existing) {
       existing.options = options;
-      return existing;
+      return {
+        ref: existing.ref,
+        replay: () => existing.replay(),
+      };
     }
 
     const record = {
@@ -49,7 +65,10 @@ vi.mock("use-scramble", () => ({
       replay: vi.fn(),
     };
     scrambleHarness.records.set(key, record);
-    return record;
+    return {
+      ref: record.ref,
+      replay: () => record.replay(),
+    };
   },
 }));
 
@@ -72,6 +91,14 @@ function installMatchMedia() {
 describe("AsciiHeroMark", () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      (callback: FrameRequestCallback) => {
+        callback(performance.now());
+        return 1;
+      },
+    );
+    vi.stubGlobal("cancelAnimationFrame", () => {});
     sessionStorage.clear();
     scrambleHarness.records.clear();
     installMatchMedia();
@@ -81,6 +108,13 @@ describe("AsciiHeroMark", () => {
     vi.runOnlyPendingTimers();
     vi.useRealTimers();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+
+    if (originalDocumentFonts) {
+      Object.defineProperty(document, "fonts", originalDocumentFonts);
+    } else {
+      Reflect.deleteProperty(document, "fonts");
+    }
   });
 
   it("configures five raster-free scramble layers from the approved palette", async () => {
@@ -219,5 +253,90 @@ describe("AsciiHeroMark", () => {
     for (const { replay } of scrambleHarness.records.values()) {
       expect(replay).toHaveBeenCalledTimes(1);
     }
+  });
+
+  it("waits for cold-load fonts before starting the first reveal", async () => {
+    let resolveFonts: (() => void) | undefined;
+    const fontsReady = new Promise<void>((resolve) => {
+      resolveFonts = resolve;
+    });
+
+    Object.defineProperty(document, "fonts", {
+      configurable: true,
+      value: { ready: fontsReady },
+    });
+
+    render(<AsciiHeroMark reducedMotion={false} />);
+    await act(async () => {});
+
+    await act(async () => {
+      vi.advanceTimersByTime(100);
+    });
+
+    expect(document.querySelector(".hero-mark")).toHaveAttribute(
+      "data-reveal-state",
+      "pending",
+    );
+    for (const { replay } of scrambleHarness.records.values()) {
+      expect(replay).not.toHaveBeenCalled();
+    }
+
+    await act(async () => {
+      resolveFonts?.();
+      await fontsReady;
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(720);
+    });
+
+    for (const { replay } of scrambleHarness.records.values()) {
+      expect(replay).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("starts with a fallback when browser font readiness never settles", async () => {
+    const fontsReady = new Promise<void>(() => {});
+    Object.defineProperty(document, "fonts", {
+      configurable: true,
+      value: { ready: fontsReady },
+    });
+
+    render(<AsciiHeroMark reducedMotion={false} />);
+    await act(async () => {});
+
+    await act(async () => {
+      vi.advanceTimersByTime(2_000);
+    });
+    await act(async () => {});
+    await act(async () => {
+      vi.advanceTimersByTime(720);
+    });
+
+    for (const { replay } of scrambleHarness.records.values()) {
+      expect(replay).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("does not restart a layer when its first frame updates React state", async () => {
+    render(<AsciiHeroMark reducedMotion={false} />);
+    await act(async () => {});
+
+    const firstRegion = scrambleHarness.records.values().next().value;
+    expect(firstRegion).toBeDefined();
+
+    await act(async () => {
+      vi.advanceTimersByTime(0);
+    });
+    expect(firstRegion?.replay).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      firstRegion?.options.onAnimationStart?.();
+      firstRegion?.options.onAnimationFrame?.("scrambling");
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(0);
+    });
+
+    expect(firstRegion?.replay).toHaveBeenCalledTimes(1);
   });
 });
