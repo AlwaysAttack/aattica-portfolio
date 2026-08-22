@@ -25,7 +25,13 @@ export const dynamicParams = false;
 export function LocalizedProjectPage({ content, locale }: LocalizedProjectPageProps) {
   return (
     <main>
-      <ProjectHeader locale={locale} navigation={content.navigation} slug={content.slug} />
+      <ProjectHeader
+        cover={content.slides[0]}
+        hero={content.hero}
+        locale={locale}
+        navigation={content.navigation}
+        slug={content.slug}
+      />
       <ProjectCase content={content} locale={locale} />
     </main>
   );

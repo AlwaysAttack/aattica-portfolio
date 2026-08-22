@@ -29,6 +29,8 @@ export const driveeContentEn = {
     switchLocale: "Read in Russian",
     presentation: "Original presentation",
     contact: "Get in touch",
+    contactEyebrow: "NEXT / CONTACT",
+    contactPrompt: "Have a role, product, or collaboration in mind? Let’s talk.",
   },
   hero: {
     title: "Drivee Peak",

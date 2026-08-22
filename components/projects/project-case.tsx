@@ -1,76 +1,99 @@
+import type { ReactNode } from "react";
+import { ProjectReveal, ProjectScrambleText } from "@/components/projects/project-motion";
+import { ProjectSlides } from "@/components/projects/project-slides";
 import type { ProjectContent } from "@/content/projects";
 import type { Locale } from "@/lib/i18n";
-import { ProjectSlides } from "@/components/projects/project-slides";
 
 type ProjectCaseProps = {
   content: ProjectContent;
   locale: Locale;
 };
 
+type StorySectionProps = {
+  body: string;
+  id: string;
+  title: string;
+  children?: ReactNode;
+};
+
+function StorySection({ body, children, id, title }: StorySectionProps) {
+  return (
+    <ProjectReveal>
+      <section className="project-story__block" aria-labelledby={id}>
+        <h2 id={id}>{title}</h2>
+        <p>{body}</p>
+        {children}
+      </section>
+    </ProjectReveal>
+  );
+}
+
 export function ProjectCase({ content, locale }: ProjectCaseProps) {
   return (
     <article className="project-case" aria-labelledby="project-title">
-      <section className="project-hero">
-        <p>{content.hero.format}</p>
-        <h1 id="project-title">{content.hero.title}</h1>
-        <p>{content.hero.valueProposition}</p>
-        <p>{content.hero.outcome}</p>
-        <dl>
-          {content.facts.map((fact) => (
-            <div key={fact.label}>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <div className="project-overview" data-testid="project-overview">
+        <ProjectReveal className="project-summary-reveal">
+          <aside className="project-summary" aria-label={content.hero.format}>
+            <p className="project-summary__eyebrow">{content.hero.format}</p>
+            <p className="project-summary__lead">{content.hero.valueProposition}</p>
+            <p className="project-summary__outcome">{content.hero.outcome}</p>
+            <dl>
+              {content.facts.map((fact) => (
+                <div key={fact.label}>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </aside>
+        </ProjectReveal>
 
-      <section aria-labelledby="project-context-title">
-        <h2 id="project-context-title">{content.context.title}</h2>
-        <p>{content.context.body}</p>
-      </section>
-      <section aria-labelledby="project-problem-title">
-        <h2 id="project-problem-title">{content.problem.title}</h2>
-        <p>{content.problem.body}</p>
-      </section>
-      <section aria-labelledby="project-research-title">
-        <h2 id="project-research-title">{content.research.title}</h2>
-        <p>{content.research.body}</p>
-      </section>
-      <section aria-labelledby="project-role-title">
-        <h2 id="project-role-title">{content.role.title}</h2>
-        <p>{content.role.body}</p>
-      </section>
-      <section aria-labelledby="project-process-title">
-        <h2 id="project-process-title">{content.process.title}</h2>
-        <p>{content.process.body}</p>
-      </section>
-      <section aria-labelledby="project-solution-title">
-        <h2 id="project-solution-title">{content.solution.title}</h2>
-        <p>{content.solution.body}</p>
-        <ul>
-          {content.solution.principles.map((principle) => (
-            <li key={principle}>{principle}</li>
-          ))}
-        </ul>
-      </section>
-      <section aria-labelledby="project-delivered-title">
-        <h2 id="project-delivered-title">{content.delivered.title}</h2>
-        <p>{content.delivered.body}</p>
-        <p>{content.delivered.uiImplementation}</p>
-      </section>
-      <section aria-labelledby="project-outcome-title">
-        <h2 id="project-outcome-title">{content.outcome.title}</h2>
-        <p>{content.outcome.body}</p>
-      </section>
-      <section aria-labelledby="project-limitations-title">
-        <h2 id="project-limitations-title">{content.limitations.title}</h2>
-        <p>{content.limitations.body}</p>
-      </section>
+        <div className="project-story">
+          <StorySection body={content.context.body} id="project-context-title" title={content.context.title} />
+          <StorySection body={content.problem.body} id="project-problem-title" title={content.problem.title} />
+          <StorySection body={content.research.body} id="project-research-title" title={content.research.title} />
+          <StorySection body={content.role.body} id="project-role-title" title={content.role.title} />
+          <StorySection body={content.process.body} id="project-process-title" title={content.process.title} />
+          <StorySection body={content.solution.body} id="project-solution-title" title={content.solution.title}>
+            <ul>
+              {content.solution.principles.map((principle) => (
+                <li key={principle}>{principle}</li>
+              ))}
+            </ul>
+          </StorySection>
+          <StorySection body={content.delivered.body} id="project-delivered-title" title={content.delivered.title}>
+            <p>{content.delivered.uiImplementation}</p>
+          </StorySection>
+          <StorySection body={content.outcome.body} id="project-outcome-title" title={content.outcome.title} />
+          <StorySection
+            body={content.limitations.body}
+            id="project-limitations-title"
+            title={content.limitations.title}
+          />
+        </div>
+      </div>
+
       <ProjectSlides label={content.navigation.presentation} slides={content.slides} />
-      <nav aria-label={content.navigation.backToProjects}>
-        <a href={`/${locale}#projects`}>{content.navigation.backToProjects}</a>
-        <a href={`/${locale}#contact`}>{content.navigation.contact}</a>
+
+      <ProjectReveal>
+        <section className="project-contact-cta" aria-labelledby="project-contact-title">
+          <p>{content.navigation.contactEyebrow}</p>
+          <h2 id="project-contact-title">
+            <ProjectScrambleText text={content.navigation.contact} />
+          </h2>
+          <p>{content.navigation.contactPrompt}</p>
+          <a href={`/${locale}#contact`}>
+            {content.navigation.contact}
+            <span aria-hidden="true">↗</span>
+          </a>
+        </section>
+      </ProjectReveal>
+
+      <nav className="project-case__footer-nav" aria-label={content.navigation.backToProjects}>
+        <a href={`/${locale}#projects`}>
+          <span aria-hidden="true">← </span>
+          {content.navigation.backToProjects}
+        </a>
       </nav>
     </article>
   );

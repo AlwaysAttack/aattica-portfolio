@@ -12,6 +12,8 @@ export type ProjectContent = {
     switchLocale: string;
     presentation: string;
     contact: string;
+    contactEyebrow: string;
+    contactPrompt: string;
   };
   hero: {
     title: string;

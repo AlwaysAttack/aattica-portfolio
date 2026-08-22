@@ -36,6 +36,7 @@ staticfiles/
 # Local tools and temporary design sessions
 .tools/
 .superpowers/brainstorm/
+/usable-resources-ignore/
 
 # Resume drafts: publish approved exports later from public/resume/
 Daniil_Golskiy*

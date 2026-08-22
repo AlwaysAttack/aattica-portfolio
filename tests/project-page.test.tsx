@@ -41,11 +41,24 @@ describe("localized Drivee case page", () => {
     expect(screen.getByText(/Figma screens/i)).toBeInTheDocument();
     expect(screen.getByText("Best App Design")).toBeInTheDocument();
     expect(screen.getAllByText(/not commercially launched or sold/i)).not.toHaveLength(0);
-    const hero = screen.getByRole("heading", { level: 1, name: "Drivee Peak" }).closest("section");
-    expect(hero).not.toBeNull();
-    expect(within(hero!).getByText("Awarded concept; not commercially launched or sold.")).toBeInTheDocument();
+    const banner = screen.getByRole("banner");
+    const cover = banner.querySelector(".project-cover");
+    expect(cover).not.toBeNull();
+    expect(within(cover as HTMLElement).getByRole("img", { name: "Peak logo over a city map" })).toHaveAttribute(
+      "src",
+      expect.stringContaining(encodeURIComponent("/cases/drivee/slides/slide-01.png")),
+    );
+    expect(within(cover as HTMLElement).getByRole("heading", { level: 1, name: "Drivee Peak" })).toBeInTheDocument();
+
+    const overview = screen.getByTestId("project-overview");
+    expect(within(overview).getByText("Awarded concept; not commercially launched or sold.")).toBeInTheDocument();
+    expect(within(overview).queryByRole("region", { name: "Original presentation" })).not.toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Original presentation" })).toHaveAttribute(
+      "data-after-overview",
+      "true",
+    );
     expect(screen.getByRole("heading", { level: 2, name: "Outcome" })).toBeInTheDocument();
-    expect(within(screen.getByRole("banner")).getByRole("link", { name: "Back to selected projects" })).toHaveAttribute(
+    expect(within(banner).getByRole("link", { name: "Back to selected projects" })).toHaveAttribute(
       "href",
       "/en#projects",
     );
@@ -57,6 +70,10 @@ describe("localized Drivee case page", () => {
       "href",
       "/en#contact",
     );
+    expect(screen.getByRole("region", { name: "Get in touch" })).toHaveTextContent(
+      "Have a role, product, or collaboration in mind? Let’s talk.",
+    );
+    expect(screen.getAllByTestId("project-reveal").length).toBeGreaterThanOrEqual(10);
     expect(within(screen.getByRole("article")).getByRole("link", { name: "Back to selected projects" })).toHaveAttribute(
       "href",
       "/en#projects",
@@ -82,6 +99,9 @@ describe("localized Drivee case page", () => {
     expect(screen.getByRole("link", { name: "Связаться" })).toHaveAttribute(
       "href",
       "/ru#contact",
+    );
+    expect(screen.getByRole("region", { name: "Связаться" })).toHaveTextContent(
+      "Есть вакансия, продукт или идея для сотрудничества? Давайте обсудим.",
     );
     expect(screen.getByRole("heading", { level: 2, name: "Результат" })).toBeInTheDocument();
   });
